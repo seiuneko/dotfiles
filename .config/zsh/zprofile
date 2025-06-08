@@ -1,0 +1,23 @@
+#!/usr/bin/zsh
+
+export VISUAL=nvim
+export EDITOR=nvim
+
+if [[ -z $SSH_AUTH_SOCK ]] {
+  unset SSH_AGENT_PID
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh"
+}
+
+if [[ -n $DISPLAY ]] {
+  export BROWSER=firefox-nightly
+
+  export GTK_IM_MODULE=fcitx
+  export QT_IM_MODULE=fcitx
+  export XMODIFIERS=@im=fcitx
+  export SDL_IM_MODULE=fcitx
+  export GLFW_IM_MODULE=ibus
+
+  export GDK_SCALE=2 GDK_DPI_SCALE=0.5
+  export QT_AUTO_SCREEN_SCALE_FACTOR=1
+}
+

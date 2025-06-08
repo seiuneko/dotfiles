@@ -1,0 +1,133 @@
+#!/usr/bin/zsh
+
+if [[ -n $ZSH_DEBUGRC ]] {
+  zmodload zsh/zprof
+}
+
+_zdir=${ZDOTDIR:-$HOME}
+_zdatadir=$HOME/.local/share/zsh
+if ! [[ -d $_zdatadir ]] {
+  mkdir -p $_zdatadir
+}
+
+HISTFILE="$_zdatadir/history"
+HISTSIZE=10000000
+SAVEHIST=10000000
+
+typeset -U path PATH
+path=($path $HOME/.local/bin $HOME/scripts)
+export PATH
+
+# oh-my-zsh
+ZSH_THEME="seiuneko"
+ZSH="$HOME/.local/share/oh-my-zsh"
+ZSH_CUSTOM="$_zdir"
+ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
+ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump-$SHORT_HOST-$ZSH_VERSION"
+
+zstyle ':omz:update' mode disabled
+COMPLETION_WAITING_DOTS="true"
+
+plugins=(
+  # custom
+  eza
+  # oh-my-zsh
+  git
+  sudo
+  man
+  tldr
+  colored-man-pages
+  archlinux
+  my-archlinux
+  vi-mode
+  systemd
+  encode64
+  zsh-autosuggestions
+  aliases
+  copypath
+  copybuffer
+  rust
+  sudo
+  safe-paste
+  zce
+  fast-syntax-highlighting
+)
+
+source $ZSH/oh-my-zsh.sh
+
+# TMUX
+if (( $+commands[tmux] )) && [[ -z $TMUX ]] {
+  exec tmux attach-session -t $USER
+}
+
+# update SSH_AUTH_SOCK for agent forward
+function _update_environment_from_tmux() {
+  if [[ -n $TMUX ]] {
+    eval $(tmux show-environment -s)
+  }
+}
+if [[ -z $DISPLAY ]] {
+  add-zsh-hook preexec _update_environment_from_tmux
+}
+
+# restoring an aborted command-line
+zle -N _restore-aborted-line_orig_zle-line-init "${widgets[zle-line-init]#user:}"
+function _restore-aborted-line_zle-line-init () {
+  if [[ -n $ZLE_LINE_ABORTED ]] {
+    _last_aborted_line=$ZLE_LINE_ABORTED
+  }
+  if [[ -n $_last_aborted_line ]] {
+    local savebuf="$BUFFER" savecur="$CURSOR"
+    BUFFER="$_last_aborted_line"
+    CURSOR="$#BUFFER"
+    zle split-undo
+    BUFFER="$savebuf" CURSOR="$savecur"
+  }
+
+  zle _restore-aborted-line_orig_zle-line-init -- $*
+  _zsh_autosuggest_widget_clear
+}
+zle -N zle-line-init _restore-aborted-line_zle-line-init
+
+TIMEFMT=("== TIME REPORT FOR $fg_bold[green]%J$reset_color =="$'\n'
+  "  User: $fg[blue]%U$reset_color"$'\t'"System: $fg[blue]%S$reset_color  Total: $fg[blue]%*Es$reset_color"$'\n'
+  "  CPU:  $fg[blue]%P$reset_color"$'\t'"Mem:    $fg[blue]%M MiB$reset_color")
+
+# gpg agent
+export GPG_TTY=$(tty)
+export PINENTRY_USER_DATA=USE_TTY=1
+
+export LESS="-FRXM"
+# default has -S
+export SYSTEMD_LESS="${LESS#-}K"
+
+export BAT_STYLE=plain
+export BAT_THEME="TwoDark"
+
+# zoxide
+export _ZO_EXCLUDE_DIRS=""
+
+# fast-syntax-highlighting
+FAST_HIGHLIGHT[use_async]=1
+
+# zsh-autosuggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=246'
+ZSH_AUTOSUGGEST_STRATEGY=(completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+
+# zce
+zstyle ':zce:*' fg 'fg=cyan,standout'
+zstyle ':zce:*' bg 'none'
+zstyle ':zce:*' prompt-char '%{\e[1;32m%}Character:%{\e[0m%} '
+zstyle ':zce:*' prompt-key '%{\e[1;32m%}Key:%{\e[0m%} '
+zstyle ':zce:*' search-case smartcase
+
+(( $+commands[zoxide] )) &&  eval "$(zoxide init zsh)"
+(( $+commands[atuin] )) &&  eval "$(atuin init zsh)"
+
+[[ -f $_zdir/zshrc.local ]] && source $_zdir/zshrc.local
+
+if [[ -n $ZSH_DEBUGRC ]] {
+  zprof
+}
+
