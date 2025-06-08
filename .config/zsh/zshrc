@@ -4,6 +4,11 @@ if [[ -n $ZSH_DEBUGRC ]] {
   zmodload zsh/zprof
 }
 
+# TMUX
+if (( $+commands[tmux] )) && [[ -z $TMUX && -n $SSH_CLIENT ]] {
+  tmux attach-session -t $USER && exit
+}
+
 _zdir=${ZDOTDIR:-$HOME}
 _zdatadir=$HOME/.local/share/zsh
 if ! [[ -d $_zdatadir ]] {
@@ -54,11 +59,6 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-
-# TMUX
-if (( $+commands[tmux] )) && [[ -z $TMUX ]] {
-  exec tmux attach-session -t $USER
-}
 
 # update SSH_AUTH_SOCK for agent forward
 function _update_environment_from_tmux() {
