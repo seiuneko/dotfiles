@@ -47,7 +47,6 @@ plugins=(
   vi-mode
   systemd
   encode64
-  zsh-autosuggestions
   aliases
   copypath
   copybuffer
@@ -55,6 +54,8 @@ plugins=(
   sudo
   safe-paste
   zce
+  fzf
+  zsh-autosuggestions
   fast-syntax-highlighting
 )
 
