@@ -1,0 +1,32 @@
+#!/usr/bin/zsh
+
+# Save this file as ~/.config/yadm/bootstrap and make it executable. It will
+# execute all executable files (excluding templates and editor backups) in the
+# ~/.config/yadm/bootstrap.d directory when run.
+
+set -eu
+
+source "${0:a}.d/utils.zsh"
+
+# Directory to look for bootstrap executables in
+BOOTSTRAP_D="${0:a}.d"
+
+if [[ ! -d "$BOOTSTRAP_D" ]]; then
+    log_error "引导目录 '$BOOTSTRAP_D' 未找到"
+    exit 1
+fi
+
+declare -a bootstraps
+while IFS= read -r bootstrap; do
+    if [[ -x "$bootstrap" && ! "$bootstrap" =~ "##" && ! "$bootstrap" =~ ~$ ]]; then
+        bootstraps+=("$bootstrap")
+    fi
+done < <(find -L "$BOOTSTRAP_D" -type f | sort)
+
+for bootstrap in "${bootstraps[@]}"; do
+    if ! "$bootstrap"; then
+        log_error "引导脚本 '$bootstrap' 执行失败"
+        exit 1
+    fi
+    echo
+done
