@@ -39,6 +39,7 @@ alias xrcp="xcp -e 'ssh -T -o Compression=no -x -c aes256-gcm@openssh.com -F $HO
 
 ## misc
 alias sudo='sudo '
+alias c='clear'
 alias nt='nexttrace'
 alias v="nvim"
 alias sv="sudoedit"

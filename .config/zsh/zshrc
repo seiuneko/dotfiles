@@ -54,7 +54,6 @@ plugins=(
   sudo
   safe-paste
   zce
-  fzf
   zsh-autosuggestions
   fast-syntax-highlighting
 )
@@ -123,8 +122,9 @@ zstyle ':zce:*' prompt-char '%{\e[1;32m%}Character:%{\e[0m%} '
 zstyle ':zce:*' prompt-key '%{\e[1;32m%}Key:%{\e[0m%} '
 zstyle ':zce:*' search-case smartcase
 
-(( $+commands[zoxide] )) &&  eval "$(zoxide init zsh)"
-(( $+commands[atuin] )) &&  eval "$(atuin init zsh)"
+(( $+commands[fzf] )) && eval "$(fzf --zsh)"
+(( $+commands[atuin] )) && eval "$(atuin init zsh)"
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 [[ -f $_zdir/zshrc.local ]] && source $_zdir/zshrc.local
 
