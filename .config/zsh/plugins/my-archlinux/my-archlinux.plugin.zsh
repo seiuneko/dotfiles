@@ -11,6 +11,7 @@ alias prfiles='paru -F'
 alias prb='paru -Bi .'
 prg(){ paru -G $1 && cd $1 }
 alias upgrade="paru -Syu"
+alias pacreps='paru -Ss --repo'
 
 # pacman
 alias paclspkg='pacman -Qlp'
