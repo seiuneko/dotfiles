@@ -1,0 +1,45 @@
+# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
+# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+"$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
+
+[mgr]
+linemode = "size"
+
+[preview]
+max_width = 9999
+max_height = 9999
+image_filter = "lanczos3"
+
+# Do not preload gvfs mount_point
+# Environment variable won't work here.
+# Using absolute path instead.
+[[plugin.preloaders]]
+name = "/run/user/1000/gvfs/**/*"
+run = "noop"
+
+[[plugin.prepend_previewers]]
+name = "*.tar*"
+run  = 'piper --format=url -- tar tf "$1"'
+
+[[plugin.prepend_previewers]]
+name = "*.csv"
+run  = 'piper -- bat -p --color=always "$1"'
+
+[[plugin.prepend_previewers]]
+name = "*.md"
+run  = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"'
+
+[[plugin.append_previewers]]
+name = "*"
+run  = 'piper -- file -bL "$1" | fmt -w $w; echo; hexyl --border=none --terminal-width=$w "$1"'
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*"
+run  = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*/"
+run  = "git"
+
