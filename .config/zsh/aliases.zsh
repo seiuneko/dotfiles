@@ -35,7 +35,10 @@ alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
 
 ## rsync
 alias xcp="rsync -aviHAXKhS --one-file-system --partial --info=progress2 --atimes --open-noatime --delete-delay --stats"
-alias xrcp="xcp -e 'ssh -T -o Compression=no -x -c aes256-gcm@openssh.com -F $HOME/.ssh/config' --rsync-path='sudo rsync'"
+alias xrcp="xcp -z -e 'ssh -F $HOME/.ssh/config' --rsync-path='sudo rsync'"
+
+## yadm
+alias ylg='yadm enter lazygit'
 
 ## misc
 alias sudo='sudo '
