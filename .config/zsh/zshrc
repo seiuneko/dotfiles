@@ -16,8 +16,8 @@ if ! [[ -d $_zdatadir ]] {
 }
 
 HISTFILE="$_zdatadir/history"
-HISTSIZE=10000000
-SAVEHIST=10000000
+HISTSIZE=999999999
+SAVEHIST=$HISTSIZE
 
 typeset -U path PATH
 path=($path $HOME/.local/bin $HOME/scripts)

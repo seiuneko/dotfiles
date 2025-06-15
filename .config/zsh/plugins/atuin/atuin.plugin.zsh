@@ -45,11 +45,7 @@ _zsh_autosuggest_strategy_atuin() {
     suggestion=$(ATUIN_QUERY="$1" atuin search --cmd-only --limit 1 --search-mode prefix)
 }
 
-if [ -n "${ZSH_AUTOSUGGEST_STRATEGY:-}" ]; then
-    ZSH_AUTOSUGGEST_STRATEGY=("atuin" "completion" "${ZSH_AUTOSUGGEST_STRATEGY[@]}")
-else
-    ZSH_AUTOSUGGEST_STRATEGY=("atuin")
-fi
+ZSH_AUTOSUGGEST_STRATEGY=("atuin" "completion")
 
 export ATUIN_SESSION=$(atuin uuid)
 ATUIN_HISTORY_ID=""
